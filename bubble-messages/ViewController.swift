@@ -11,6 +11,12 @@ import UIKit
 class ViewController: UITableViewController {
     
     let cellId = "cellId"
+    
+    let textMessages = [
+        "This is very short text",
+        "This is a ver long long long text to test the cells",
+        " This is a ver long long long text This is a ver long long long text This is a ver long long long text This is a ver long long long text"
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,15 +24,16 @@ class ViewController: UITableViewController {
         navigationItem.title = "Bubble Messages 💙"
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: cellId)
+        tableView.separatorStyle = .none
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return textMessages.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ChatMessageCell
-        cell.messageLabel.numberOfLines = 0
+        cell.messageLabel.text = textMessages[indexPath.row]
         return cell
     }
     
