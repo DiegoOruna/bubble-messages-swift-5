@@ -49,7 +49,7 @@ class ChatMessageCell: UITableViewCell {
         
         
         let constraints = [
-        messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
+        messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
         messageLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
         messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
         
