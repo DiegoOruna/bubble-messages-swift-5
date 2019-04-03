@@ -8,14 +8,21 @@
 
 import UIKit
 
+struct ChatMessage {
+    let text:String
+    let isIncoming:Bool
+}
+
 class ViewController: UITableViewController {
     
     let cellId = "cellId"
     
-    let textMessages = [
-        "This is very short text",
-        "This is a ver long long long text to test the cells",
-        " This is a ver long long long text This is a ver long long long text This is a ver long long long text This is a ver long long long text"
+    let chatMessages = [
+        ChatMessage(text: "This is very short text", isIncoming: true),
+        ChatMessage(text: "This is very short text only for demonstrate the autosizing tableview, but this is not the only feature inside this awesome app", isIncoming: true),
+        ChatMessage(text: "This is very short text", isIncoming: false),
+        ChatMessage(text: "This is very short text", isIncoming: true),
+        ChatMessage(text: "This is another text from me, and only me in the current application writed in Swift 5 for all the comunity in Github, another commit is incoming", isIncoming: false)
     ]
 
     override func viewDidLoad() {
@@ -25,15 +32,20 @@ class ViewController: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: cellId)
         tableView.separatorStyle = .none
+        tableView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return textMessages.count
+        return chatMessages.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ChatMessageCell
-        cell.messageLabel.text = textMessages[indexPath.row]
+        
+        let chatMessage = chatMessages[indexPath.row]
+        
+        cell.chatMessage = chatMessage
+        
         return cell
     }
     

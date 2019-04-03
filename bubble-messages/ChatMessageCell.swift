@@ -11,14 +11,33 @@ import UIKit
 class ChatMessageCell: UITableViewCell {
 
     let messageLabel = UILabel()
-    
     let backgroundBubble = UIView()
+    
+    var leadingConstraint:NSLayoutConstraint!
+    var trailingConstraint:NSLayoutConstraint!
+    
+    var chatMessage:ChatMessage!{
+        didSet{
+            backgroundBubble.backgroundColor = chatMessage.isIncoming ? .white : .darkGray
+            messageLabel.textColor = chatMessage.isIncoming ? .black : .white
+            messageLabel.text = chatMessage.text
+            
+            if chatMessage.isIncoming {
+                leadingConstraint.isActive = true
+                trailingConstraint.isActive = false
+            } else {
+                leadingConstraint.isActive = false
+                trailingConstraint.isActive = true
+            }
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = .clear
         
-        backgroundBubble.backgroundColor = .green
-        backgroundBubble.layer.cornerRadius = 7
+        backgroundBubble.backgroundColor = .blue
+        backgroundBubble.layer.cornerRadius = 12
         addSubview(backgroundBubble)
         addSubview(messageLabel)
         
@@ -27,10 +46,11 @@ class ChatMessageCell: UITableViewCell {
         backgroundBubble.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        let constraints = [messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
-        messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
-        messageLabel.widthAnchor.constraint(equalToConstant: 250),
-        messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+        
+        let constraints = [
+        messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
+        messageLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
+        messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
         
         backgroundBubble.topAnchor.constraint(equalTo: messageLabel.topAnchor, constant: -16),
         backgroundBubble.leadingAnchor.constraint(equalTo: messageLabel.leadingAnchor, constant: -16),
@@ -39,6 +59,10 @@ class ChatMessageCell: UITableViewCell {
         ]
         
         NSLayoutConstraint.activate(constraints)
+        
+        leadingConstraint = messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32)
+        trailingConstraint = messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
