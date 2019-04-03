@@ -18,7 +18,7 @@ class ChatMessageCell: UITableViewCell {
     
     var chatMessage:ChatMessage!{
         didSet{
-            backgroundBubble.backgroundColor = chatMessage.isIncoming ? .white : .darkGray
+            backgroundBubble.backgroundColor = chatMessage.isIncoming ? .white : UIColor(red: 0/255, green: 128/255, blue: 255/255, alpha: 1)
             messageLabel.textColor = chatMessage.isIncoming ? .black : .white
             messageLabel.text = chatMessage.text
             
@@ -35,6 +35,7 @@ class ChatMessageCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
+        selectionStyle = .none
         
         backgroundBubble.backgroundColor = .blue
         backgroundBubble.layer.cornerRadius = 12
