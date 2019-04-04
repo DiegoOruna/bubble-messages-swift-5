@@ -43,14 +43,29 @@ class ViewController: UITableViewController {
     
     let messagesFromServer = [
         ChatMessage(text: "This is very short text", isIncoming: true, date: Date.dateFromCustomString(customString: "08/03/2019")),
+        ChatMessage(text: "This is another text from the same date", isIncoming: true, date: Date.dateFromCustomString(customString: "08/03/2019")),
         ChatMessage(text: "This is very short text only for demonstrate the autosizing tableview, but this is not the only feature inside this awesome app", isIncoming: true, date: Date.dateFromCustomString(customString: "09/03/2019")),
         ChatMessage(text: "This is very short text", isIncoming: false, date: Date.dateFromCustomString(customString: "10/03/2019")),
         ChatMessage(text: "This is another text from me, and only me in the current application writed in Swift 5 for all the comunity in Github, another commit is incoming", isIncoming: false, date: Date.dateFromCustomString(customString: "11/03/2019")),
         ChatMessage(text: "🤓", isIncoming: true, date: Date.dateFromCustomString(customString: "12/03/2019"))
     ]
+
+    fileprivate func attemptToAssembleGroupedMessages() {
+
+        let groupedMessages = Dictionary(grouping: messagesFromServer) { (element) -> Date in
+            return element.date
+        }
+        
+        let sortedKeys = groupedMessages.keys.sorted()
+        sortedKeys.forEach { (key) in
+            let values = groupedMessages[key]
+            chatMessages.append(values ?? [])
+        }
+        
+    }
     
     var chatMessages = [[ChatMessage]]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -59,6 +74,8 @@ class ViewController: UITableViewController {
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: cellId)
         tableView.separatorStyle = .none
         tableView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        
+        attemptToAssembleGroupedMessages()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -69,7 +86,7 @@ class ViewController: UITableViewController {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            backgroundColor = .blue
+            backgroundColor = .gray
             textColor = .white
             textAlignment = .center
             font = UIFont.boldSystemFont(ofSize: 14)
