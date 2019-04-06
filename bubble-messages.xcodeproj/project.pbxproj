@@ -58,11 +58,11 @@
 			children = (
 				04D4A248225523A8000F900C /* AppDelegate.swift */,
 				04D4A24A225523A8000F900C /* ViewController.swift */,
+				04D4A25A225526C6000F900C /* ChatMessageCell.swift */,
 				04D4A24C225523A8000F900C /* Main.storyboard */,
 				04D4A24F225523A9000F900C /* Assets.xcassets */,
 				04D4A251225523A9000F900C /* LaunchScreen.storyboard */,
 				04D4A254225523A9000F900C /* Info.plist */,
-				04D4A25A225526C6000F900C /* ChatMessageCell.swift */,
 			);
 			path = "bubble-messages";
 			sourceTree = "<group>";

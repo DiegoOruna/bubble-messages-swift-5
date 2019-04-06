@@ -9,7 +9,7 @@
 import UIKit
 
 class ChatMessageCell: UITableViewCell {
-
+    
     let messageLabel = UILabel()
     let backgroundBubble = UIView()
     
@@ -34,6 +34,10 @@ class ChatMessageCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupStyle()
+    }
+    
+    fileprivate func setupStyle(){
         backgroundColor = .clear
         selectionStyle = .none
         
@@ -49,14 +53,14 @@ class ChatMessageCell: UITableViewCell {
         
         
         let constraints = [
-        messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
-        messageLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
-        messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
-        
-        backgroundBubble.topAnchor.constraint(equalTo: messageLabel.topAnchor, constant: -16),
-        backgroundBubble.leadingAnchor.constraint(equalTo: messageLabel.leadingAnchor, constant: -16),
-        backgroundBubble.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 16),
-        backgroundBubble.trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: 16)
+            messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
+            messageLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
+            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
+            
+            backgroundBubble.topAnchor.constraint(equalTo: messageLabel.topAnchor, constant: -16),
+            backgroundBubble.leadingAnchor.constraint(equalTo: messageLabel.leadingAnchor, constant: -16),
+            backgroundBubble.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 16),
+            backgroundBubble.trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: 16)
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -64,6 +68,10 @@ class ChatMessageCell: UITableViewCell {
         leadingConstraint = messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32)
         trailingConstraint = messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
         
+        //Shadow
+        layer.shadowColor = UIColor(white: 0.5, alpha: 0.5).cgColor
+        layer.shadowOpacity = 0.5
+        layer.shadowOffset = CGSize(width: 2, height: 4)
     }
     
     required init?(coder aDecoder: NSCoder) {

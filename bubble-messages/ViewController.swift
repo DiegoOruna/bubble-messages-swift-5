@@ -24,6 +24,48 @@ extension Date {
 
 class ViewController: UITableViewController {
     
+    var iconsContainerView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        
+        let iconHeight:CGFloat = 43
+        let padding:CGFloat = 6
+        
+        let images = [UIImage(named: "blue_like"), UIImage(named: "red_heart"), UIImage(named: "surprised"), UIImage(named: "cry_laugh"), UIImage(named: "cry"), UIImage(named: "angry")]
+        
+        let arrangedSubviews = images.map({ (image) -> UIImageView in
+            let imageView = UIImageView(image: image)
+            imageView.layer.cornerRadius = iconHeight / 2
+            //required for hit testing
+            imageView.isUserInteractionEnabled = true
+            return imageView
+        })
+        
+        let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
+        stackView.distribution = .fillEqually
+        
+        stackView.spacing = padding
+        stackView.layoutMargins = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        
+        view.addSubview(stackView)
+        
+        let numIcons = CGFloat(arrangedSubviews.count)
+        let width = numIcons * iconHeight + (numIcons + 1) * padding
+        
+        view.frame = CGRect(x: 0, y: 0, width: width, height: iconHeight + 2 * padding)
+        view.layer.cornerRadius = view.frame.height / 2
+        
+        //Shadowlayer
+        view.layer.shadowColor = UIColor(white: 0.4, alpha: 0.4).cgColor
+        view.layer.shadowOpacity = 0.5
+        view.layer.shadowOffset = CGSize(width: 0, height: 4)
+        
+        stackView.frame = view.frame
+        
+        return view
+    }()
+    
     let cellId = "cellId"
     
 //    let chatMessages = [
@@ -49,6 +91,8 @@ class ViewController: UITableViewController {
         ChatMessage(text: "This is another text from me, and only me in the current application writed in Swift 5 for all the comunity in Github, another commit is incoming", isIncoming: false, date: Date.dateFromCustomString(customString: "11/03/2019")),
         ChatMessage(text: "🤓", isIncoming: true, date: Date.dateFromCustomString(customString: "12/03/2019"))
     ]
+    
+    var chatMessages = [[ChatMessage]]()
 
     fileprivate func attemptToAssembleGroupedMessages() {
 
@@ -63,19 +107,86 @@ class ViewController: UITableViewController {
         }
         
     }
-    
-    var chatMessages = [[ChatMessage]]()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        navigationItem.title = "Bubble Messages 💙"
+        setupStyle()
+        attemptToAssembleGroupedMessages()
+    }
+    
+    fileprivate func setupStyle(){
+        navigationItem.title = "Bubbles 💙"
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: cellId)
         tableView.separatorStyle = .none
         tableView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    }
+    
+    @objc fileprivate func handleLongPress(gesture:UILongPressGestureRecognizer){
         
-        attemptToAssembleGroupedMessages()
+        if gesture.state == .began {
+            handleGestureBegan(gesture: gesture)
+        } else if gesture.state == .ended {
+            handleGestureEnd()
+        } else if gesture.state == .changed {
+            handleGestureChange(gesture: gesture)
+        }
+        
+    }
+    
+    fileprivate func handleGestureEnd(){
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            let stackView = self.iconsContainerView.subviews.first
+            stackView?.subviews.forEach({ (UIImageView) in
+                UIImageView.transform = .identity
+            })
+            
+            self.iconsContainerView.transform = self.iconsContainerView.transform.translatedBy(x: 0, y: 50)
+            self.iconsContainerView.alpha = 0
+            
+        }) { (_) in
+            self.iconsContainerView.removeFromSuperview()
+        }
+    }
+    
+    fileprivate func handleGestureChange(gesture:UILongPressGestureRecognizer){
+        
+        let pressedLocation = gesture.location(in: self.iconsContainerView)
+        let fixedYLocation = CGPoint(x: pressedLocation.x, y: self.iconsContainerView.frame.height / 2)
+        
+        let hitTestView = iconsContainerView.hitTest(fixedYLocation, with: nil)
+        
+        if hitTestView is UIImageView {
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                
+                let stackView = self.iconsContainerView.subviews.first
+                stackView?.subviews.forEach({ (UIImageView) in
+                    UIImageView.transform = .identity
+                })
+                
+                hitTestView?.transform = CGAffineTransform(translationX: 0, y: -50)
+                
+            })
+
+        }
+    }
+    
+    fileprivate func handleGestureBegan(gesture:UILongPressGestureRecognizer){
+        
+        view.addSubview(iconsContainerView)
+        
+        let pressedLocation = gesture.location(in: self.view)
+        
+        let centeredX = (view.frame.width - iconsContainerView.frame.width) / 2
+        
+        iconsContainerView.transform = CGAffineTransform(translationX: centeredX, y: pressedLocation.y)
+        iconsContainerView.alpha = 0
+        
+        UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.iconsContainerView.transform = CGAffineTransform(translationX: centeredX, y: pressedLocation.y - self.iconsContainerView.frame.height)
+            self.iconsContainerView.alpha = 1
+        }, completion: nil)
+        
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -144,12 +255,10 @@ class ViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ChatMessageCell
         let chatMessage = chatMessages[indexPath.section][indexPath.row]
         cell.chatMessage = chatMessage
-        
+        cell.backgroundBubble.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress)))
         return cell
     }
     
-    
-
 
 }
 
